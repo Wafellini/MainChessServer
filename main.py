@@ -5,9 +5,8 @@ import asyncio
 from websockets import connect
 
 from stockfish import Stockfish
-stockfish = Stockfish("C:/Users/wafel/Downloads/stockfish_14_win_x64_avx2/stockfish_14_x64_avx2.exe",parameters={"MultiPV": 4})
-# stockfish = Stockfish(parameters={"MultiPV": 4})
-# stockfish.get_parameters()
+
+stockfish = Stockfish("C:/Users/thewa/Downloads/stockfish_14.1_win_x64_popcnt/stockfish_14.1_win_x64_popcnt.exe", parameters={"MultiPV": 4, "movetime": 5000})
 stockfish.set_position(["e2e4"])
 print(stockfish.get_top_moves(4))
 
