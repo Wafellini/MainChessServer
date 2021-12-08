@@ -34,7 +34,7 @@ def startEngine(token):
     return response.text
 
 
-async def hello(uri, number_moves, tkn):
+async def hello(uri, number_moves, moves, tkn):
     async with connect(uri, extra_headers={"Authorization": f"Bearer {tkn}"}) as websocket:
         await websocket.send("uci")
         while True:
@@ -59,7 +59,7 @@ async def hello(uri, number_moves, tkn):
             if message == 'readyok':
                 break
 
-        await websocket.send("position startpos moves e2e4")
+        await websocket.send(f"position startpos moves {moves}")
         await websocket.send("go movetime 5000")
 
         while True:
@@ -68,13 +68,13 @@ async def hello(uri, number_moves, tkn):
                 print(message)
 
 
-def login_and_run():
+def login_and_run(moves):
     tkn = login()
     availableEngines(tkn)
     startEngine(tkn)
 
-    moves = 4
-    asyncio.run(hello("ws://192.168.56.108:8080/ws_engine", moves, tkn))
+    num_of_moves = 4
+    asyncio.run(hello("ws://192.168.56.108:8080/ws_engine", num_of_moves, moves, tkn))
 
 def login_and_run2():
     tkn = login()
