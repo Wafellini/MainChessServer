@@ -4,11 +4,13 @@ import json
 import asyncio
 from websockets import connect
 
+from server_config import config as config
 
-def login():
+
+def login(config, machine):
     headers = {'Content-type': 'application/json'}
     data = '{"login": "test", "password": "111111"}'
-    url = "http://192.168.56.108:8080/user/login"
+    url = f"{config['machine_ips'][machine]}/user/login"
 
     response = requests.post(url, data=data, headers=headers)
     print(response.text)
@@ -16,18 +18,18 @@ def login():
     return resp["token"]
 
 
-def availableEngines(token):
+def availableEngines(token, config, machine):
     headers = {'Authorization': f'Bearer {token}'}
-    url = "http://192.168.56.108:8080/engine/available"
+    url = f"{config['machine_ips'][machine]}/engine/available"
 
     response = requests.get(url, headers=headers)
     print(response.text)
 
 
-def startEngine(token):
+def startEngine(token, config, machine):
     headers = {'Authorization': f'Bearer {token}', 'Content-type': 'application/json'}
     data = '{"engine" : "Stockfish"}'
-    url = "http://192.168.56.108:8080/engine/start"
+    url = f"{config['machine_ips'][machine]}/engine/start"
 
     response = requests.post(url, data=data, headers=headers)
     print(response.text)
@@ -69,17 +71,11 @@ async def hello(uri, number_moves, moves, tkn):
 
 
 def login_and_run(moves):
-    tkn = login()
-    availableEngines(tkn)
-    startEngine(tkn)
+    tkn = login(config, 0)
+    availableEngines(tkn, config, 0)
+    startEngine(tkn, config, 0)
 
     num_of_moves = 4
-    asyncio.run(hello("ws://192.168.56.108:8080/ws_engine", num_of_moves, moves, tkn))
+    asyncio.run(hello(f"{config['socket_ips'][0]}/ws_engine", num_of_moves, moves, tkn))
 
-def login_and_run2():
-    tkn = login()
-    availableEngines(tkn)
-    startEngine(tkn)
-
-    moves = 4
-    asyncio.run(hello("ws://192.168.56.108:8081/ws_engine", moves, tkn))
+login_and_run(config['start_pos'][0])
